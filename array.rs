@@ -1,9 +1,27 @@
+
+use ::colored::Colorize;
+extern crate colored; 
+
 struct Hero {
     hero_name: String,
     icon: char,
     health: u32,
     x: i32,
     y: i32,
+}
+
+struct Enemy {
+    enemy_name: String,
+    icon: String,
+    health: u32,
+    x: i32,
+    y: i32,
+}
+
+impl Enemy {
+    fn new() -> Enemy {
+        Enemy {enemy_name: "Killer Robot".to_string(), icon: "🤖".to_string(), health: 10, x: 0, y:0  }
+    }
 }
 
 struct Map {
@@ -34,6 +52,20 @@ fn main(){
             x: 6,
             y: 2
         };
+        
+        let mut e = Enemy {
+            enemy_name: "Bob".to_string(),
+            icon: "🤖".to_string(),
+            health: 100,
+            x: 16,
+            y: 12
+        };
+
+        let mut enemy_vec = Vec::with_capacity(20);
+for x in 0..20 {
+    enemy_vec.push(Enemy::new());
+}
+
     map.state[3][4] = "&".to_string();
     map.state[1][10] = "1".to_string();
     map.state[9][10] = "9".to_string();
@@ -111,32 +143,39 @@ fn init_map(m: &mut Map, width: usize, height: usize){
     for n in 0..width{
         for o in 0..height{
             if o == 0 {
-                m.state[n][o] = "|".to_string();
+                m.state[n][o] = "|".to_string().yellow().to_string();
             }
             else if o == 1000{
-                m.state[n][o] = "|".to_string();
+                m.state[n][o] = "|".to_string().yellow().to_string();
             }
             else if n == 0 {
-                m.state[n][o] = "-".to_string();
+                m.state[n][o] = "-".to_string().blue().to_string();
             }
             else if n == 1000 {
-                m.state[n][o] = "-".to_string();
+                m.state[n][o] = "-".to_string().blue().to_string();
             }
             else if o == 1  {
-                m.state[n][o] = n.to_string();
+                if n < 10 {
+                let mut coord = format!("0{}",n).purple();
+                    m.state[n][o] = coord.to_string();
+                } else {
+                    m.state[n][o] = n.to_string().purple().to_string();
+                }
+               
             }
             else {
-                m.state[n][o] = ".".to_string();
+                m.state[n][o] = ".".to_string().green().to_string();
             }     
         }
     }
 }
 
 fn remove_old(x: i32, y: i32, m: &mut Map){
-    m.state[y as usize][x as usize] = ",".to_string();
+    m.state[y as usize][x as usize] = ",".to_string().yellow().to_string();
 }
 fn update_place(h :&Hero, m: &mut Map){
-    m.state[h.y as usize][h.x as usize] = h.icon.to_string();
+    m.state[h.y as usize][h.x as usize] = h.icon.to_string().red().to_string();
+    // m.state[10][10]="🤖".to_string();
 }
 
 fn print_map(m: &Map, h :&Hero){
@@ -164,7 +203,9 @@ fn print_map(m: &Map, h :&Hero){
         for o in base_x..=max_x{
             print!("{}", m.state[n][o]);
         }
-        println!("> Hero is at {}, {}", h.x.to_string(),h.y.to_string());
+        let mut wall = format!("{}", "|".yellow());
+        println!("{}",wall);
     }
+    let mut status = format!("{} {}, {}","> Hero is at".yellow(), h.x.to_string(),h.y.to_string());
 
 }
